@@ -4,38 +4,18 @@ import Map "mo:base/HashMap";
 import Text "mo:base/Text";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
+import InvoiceTypes "types";
 
-actor CollateralCanister {
-    type InvoiceId = Text;
-    type Error = {
-        #NotFound;
-        #AlreadyExists;
-        #NotAuthorized;
-        #InvalidStatus;
-    };
+actor {
 
-    type Invoice = {
-        issuer: Principal;
-        amount: Nat;
-        dueDate: Time.Time;
-        status: InvoiceStatus;
-        createdAt: Time.Time;
-    };
 
-    type InvoiceStatus = {
-        #Pending;
-        #Verified;
-        #Paid;
-        #Overdue;
-    };
+    private var invoices = Map.HashMap<InvoiceTypes.InvoiceId, InvoiceTypes.Invoice>(0, Text.equal, Text.hash);
 
-    private var invoices = Map.HashMap<InvoiceId, Invoice>(0, Text.equal, Text.hash);
-
-    public shared(msg) func registerInvoice(invoiceId: InvoiceId, amount: Nat, dueDate: Time.Time) : async Result.Result<(), Error> {
+    public shared(msg) func registerInvoice(invoiceId: InvoiceTypes.InvoiceId, amount: Nat, dueDate: Time.Time) : async Result.Result<(), InvoiceTypes.ErrorInvoice> {
         switch (invoices.get(invoiceId)) {
             case (?_) { #err(#AlreadyExists) };
             case (null) {
-                let invoice : Invoice = {
+                let invoice : InvoiceTypes.Invoice = {
                     issuer = msg.caller;
                     amount = amount;
                     dueDate = dueDate;
@@ -48,14 +28,14 @@ actor CollateralCanister {
         }
     };
 
-    public query func getInvoice(invoiceId: InvoiceId) : async Result.Result<Invoice, Error> {
+    public query func getInvoice(invoiceId: InvoiceTypes.InvoiceId) : async Result.Result<InvoiceTypes.Invoice, InvoiceTypes.ErrorInvoice> {
         switch (invoices.get(invoiceId)) {
             case (null) { #err(#NotFound) };
             case (?invoice) { #ok(invoice) };
         }
     };
 
-    public shared(msg) func verifyInvoice(invoiceId: InvoiceId) : async Result.Result<(), Error> {
+    public shared(msg) func verifyInvoice(invoiceId: InvoiceTypes.InvoiceId) : async Result.Result<(), InvoiceTypes.ErrorInvoice> {
         switch (invoices.get(invoiceId)) {
             case (null) { #err(#NotFound) };
             case (?invoice) {
@@ -73,7 +53,7 @@ actor CollateralCanister {
         }
     };
 
-    public shared(msg) func updateInvoiceStatus(invoiceId: InvoiceId, newStatus: InvoiceStatus) : async Result.Result<(), Error> {
+    public shared(msg) func updateInvoiceStatus(invoiceId: InvoiceTypes.InvoiceId, newStatus: InvoiceTypes.InvoiceStatus) : async Result.Result<(), InvoiceTypes.ErrorInvoice> {
         switch (invoices.get(invoiceId)) {
             case (null) { #err(#NotFound) };
             case (?invoice) {
@@ -103,7 +83,7 @@ actor CollateralCanister {
         };
     };
 
-    public query func getAllInvoices() : async [Invoice] {
+    public query func getAllInvoices() : async [InvoiceTypes.Invoice] {
         Iter.toArray(invoices.vals())
     };
 }

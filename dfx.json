@@ -4,6 +4,14 @@
       "main": "src/bmokoto_backend/main.mo",
       "type": "motoko"
     },
+    "loan" : {
+      "main": "src/bmokoto_backend/loan.mo",
+      "type": "motoko"
+    },
+    "invoice" : {
+      "main": "src/bmokoto_backend/invoice.mo",
+      "type": "motoko"
+    },
     "bmokoto_frontend": {
       "dependencies": [
         "bmokoto_backend"
