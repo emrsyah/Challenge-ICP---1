@@ -8,9 +8,23 @@
       "main": "src/bmokoto_backend/loan.mo",
       "type": "motoko"
     },
+    "wallet" : {
+      "main": "src/bmokoto_backend/wallet.mo",
+      "type": "motoko"
+    },
     "invoice" : {
       "main": "src/bmokoto_backend/invoice.mo",
       "type": "motoko"
+    },
+    "icp_ledger_canister": {
+      "type": "custom",
+      "candid": "https://raw.githubusercontent.com/dfinity/ic/94fd38099f0e63950eb5d5673b7b9d23780ace2d/rs/rosetta-api/icp_ledger/ledger.did",
+      "wasm": "https://download.dfinity.systems/ic/94fd38099f0e63950eb5d5673b7b9d23780ace2d/canisters/ledger-canister.wasm.gz",
+      "remote": {
+        "id": {
+          "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai"
+        }
+      }
     },
     "bmokoto_frontend": {
       "dependencies": [
